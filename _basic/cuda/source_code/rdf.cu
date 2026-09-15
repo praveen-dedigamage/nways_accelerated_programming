@@ -71,10 +71,10 @@ int main(int argc , char* argv[])
 
    	//Todo: Allocate memory on GPU.
    // Allocate Unified Memory -- accessible from CPU or GPU
-    cudaMallocManaged();
-    cudaMallocManaged();
-    cudaMallocManaged();
-    cudaMallocManaged();
+    ANDLE_ERROR(cudaMallocManaged(&d_x, sizef));
+    HANDLE_ERROR(cudaMallocManaged(&d_y, sizef));
+    HANDLE_ERROR(cudaMallocManaged(&d_z, sizef));
+    HANDLE_ERROR(cudaMallocManaged(&d_g2, sizebin));
 
     HANDLE_ERROR (cudaPeekAtLastError());
 
@@ -104,7 +104,7 @@ int main(int argc , char* argv[])
     nblock.z = 1;
     //Todo: Fill the number of blocks and threads and pass the right device pointers
     pair_gpu<<<nblock, nthreads>>>
-        (, ,, , numatm, nconf, xbox, ybox, zbox, nbin);
+        (d_x, d_y, d_z, d_g2, numatm, nconf, xbox, ybox, zbox, nbin);
 
     HANDLE_ERROR (cudaPeekAtLastError());
     HANDLE_ERROR(cudaDeviceSynchronize());
@@ -181,8 +181,8 @@ __global__ void pair_gpu(const double* d_x, const double* d_y, const double* d_z
     double del = box / (2.0 * d_bin);
     cut = box * 0.5;
 
-    int id1 = 	//Todo: Write indexing logic using threads and blocks
-    int id2 = 	//Todo: Write indexing logic using threads and blocks
+    int id1 = blockIdx.x * blockDim.x + threadIdx.x;	//Todo: Write indexing logic using threads and blocks
+    int id2 = blockIdx.y * blockDim.y + threadIdx.y;	//Todo: Write indexing logic using threads and blocks
 
     if (id1 >= numatm || id2 >= numatm) return;
     if (id1 > id2) return;
