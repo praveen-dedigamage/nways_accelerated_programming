@@ -225,10 +225,9 @@ void pair_gpu(
 	double n;
 
 	//Todo: Write indexing logic using threads and blocks
-	int i =
+	int i = blockIdx.x * blockDim.x + threadIdx.x;	//Todo: Write indexing logic using threads and blocks
 
-
-		int maxi = min(int(0.5*numatm*(numatm-1)-(bl*65535*128)),(65535*128));
+    int maxi = min(int(0.5*numatm*(numatm-1)-(bl*65535*128)),(65535*128));
 
 	if ( i < maxi ) {
 		thisi=bl*65535*128+i;
