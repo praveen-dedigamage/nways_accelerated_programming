@@ -81,10 +81,10 @@ int main(int argc , char* argv[] )
 	HANDLE_ERROR(cudaHostAlloc((void **)&h_g2, sizebin, cudaHostAllocDefault));
 
 	//Todo: Allocate memory on GPU.
-	HANDLE_ERROR(cudaMalloc(); //For d_x
-	HANDLE_ERROR(cudaMalloc(); //For d_y
-	HANDLE_ERROR(cudaMalloc(); //For d_z
-	HANDLE_ERROR(cudaMalloc(); //For d_g2
+	HANDLE_ERROR(cudaMalloc(&d_x, sizef)); //For d_x
+	HANDLE_ERROR(cudaMalloc(&d_y, sizef)); //For d_y
+	HANDLE_ERROR(cudaMalloc(&d_z, sizef)); //For d_z
+	HANDLE_ERROR(cudaMalloc(&d_g2, sizebin)); //For d_g2
 
 	HANDLE_ERROR (cudaPeekAtLastError());
 
@@ -104,12 +104,12 @@ int main(int argc , char* argv[] )
 	nvtxRangePop(); //pop for REading file
 
 
-	nvtxRangePush("Pair_Calculation");
+	nvtxRangePush("Pair_Calculation_From_Obsolete_File");
 	//Todo: Copy the data from Host to Device before calculation on GPU
-	HANDLE_ERROR(cudaMemcpy(dest, source, ,));
-	HANDLE_ERROR(cudaMemcpy(dest, source, , ));
-	HANDLE_ERROR(cudaMemcpy(dest, source, , ));
-	HANDLE_ERROR(cudaMemcpy(dest, source, , ));
+	HANDLE_ERROR(cudaMemcpy(d_x, h_x, sizef, cudaMemcpyHostToDevice));
+	HANDLE_ERROR(cudaMemcpy(d_y, h_y, sizef, cudaMemcpyHostToDevice));
+	HANDLE_ERROR(cudaMemcpy(d_z, h_z, sizef, cudaMemcpyHostToDevice));
+	HANDLE_ERROR(cudaMemcpy(d_g2, h_g2, sizebin, cudaMemcpyHostToDevice));
 
 	cout<<"Reading of input file and transfer to gpu is completed"<<endl;
 	//////////////////////////////////////////////////////////////////////////
@@ -130,14 +130,14 @@ int main(int argc , char* argv[] )
 	for (bl=0;bl<(blockloop+1);bl++) {
 		//cout <<bl<<endl;
 		//Todo: Fill the number of blocks and threads and pass the right device pointers
-		pair_gpu<<< , >>> (, , , , numatm, nconf, xbox, ybox, zbox, nbin, bl);
+		pair_gpu<<< , >>> (d_x, d_y, d_z, d_g2, numatm, nconf, xbox, ybox, zbox, nbin, bl);
 
 		HANDLE_ERROR (cudaPeekAtLastError());
 		HANDLE_ERROR(cudaDeviceSynchronize());
 	}
 
 	//Todo: Copy d_ge back from Device to Host
-	HANDLE_ERROR(cudaMemcpy(dest, source, , ));
+	HANDLE_ERROR(cudaMemcpy(h_g2, d_g2, sizebin, cudaMemcpyDeviceToHost));
 
 	nvtxRangePop(); //Pop for Pair Calculation
 
