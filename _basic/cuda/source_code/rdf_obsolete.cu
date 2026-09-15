@@ -208,7 +208,7 @@ int main(int argc , char* argv[] )
 }
 
 //Todo: Convert the call to GPU call by adding right keyword
-void pair_gpu(
+__global__ void pair_gpu(
 		const double* d_x, const double* d_y, const double* d_z, 
 		unsigned long long int *d_g2, int numatm, int nconf, 
 		const double xbox,const double ybox,const double zbox,int d_bin,  unsigned long long int bl)
