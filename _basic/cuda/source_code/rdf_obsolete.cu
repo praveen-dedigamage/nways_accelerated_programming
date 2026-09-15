@@ -130,7 +130,7 @@ int main(int argc , char* argv[] )
 	for (bl=0;bl<(blockloop+1);bl++) {
 		//cout <<bl<<endl;
 		//Todo: Fill the number of blocks and threads and pass the right device pointers
-		pair_gpu<<< , >>> (d_x, d_y, d_z, d_g2, numatm, nconf, xbox, ybox, zbox, nbin, bl);
+		pair_gpu<<< nblock, nthreads >>> (d_x, d_y, d_z, d_g2, numatm, nconf, xbox, ybox, zbox, nbin, bl);
 
 		HANDLE_ERROR (cudaPeekAtLastError());
 		HANDLE_ERROR(cudaDeviceSynchronize());
