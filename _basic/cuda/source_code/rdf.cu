@@ -71,7 +71,7 @@ int main(int argc , char* argv[])
 
    	//Todo: Allocate memory on GPU.
    // Allocate Unified Memory -- accessible from CPU or GPU
-    ANDLE_ERROR(cudaMallocManaged(&d_x, sizef));
+    HANDLE_ERROR(cudaMallocManaged(&d_x, sizef));
     HANDLE_ERROR(cudaMallocManaged(&d_y, sizef));
     HANDLE_ERROR(cudaMallocManaged(&d_z, sizef));
     HANDLE_ERROR(cudaMallocManaged(&d_g2, sizebin));
@@ -102,7 +102,14 @@ int main(int argc , char* argv[])
     nblock.x = (numatm + nthreads.x - 1)/nthreads.x;
     nblock.y = (numatm + nthreads.y - 1)/nthreads.y;
     nblock.z = 1;
+
     //Todo: Fill the number of blocks and threads and pass the right device pointers
+    
+    HANDLE_ERROR(cudaMemPrefetchAsync(d_x, sizef, device, 0));
+    HANDLE_ERROR(cudaMemPrefetchAsync(d_y, sizef, device, 0));
+    HANDLE_ERROR(cudaMemPrefetchAsync(d_z, sizef, device, 0));
+    HANDLE_ERROR(cudaMemPrefetchAsync(d_g2, sizebin, device, 0));
+    
     pair_gpu<<<nblock, nthreads>>>
         (d_x, d_y, d_z, d_g2, numatm, nconf, xbox, ybox, zbox, nbin);
 
