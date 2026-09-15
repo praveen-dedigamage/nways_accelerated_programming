@@ -105,10 +105,11 @@ int main(int argc , char* argv[])
 
     //Todo: Fill the number of blocks and threads and pass the right device pointers
     
-    HANDLE_ERROR(cudaMemPrefetchAsync(d_x, sizef, device, 0));
-    HANDLE_ERROR(cudaMemPrefetchAsync(d_y, sizef, device, 0));
-    HANDLE_ERROR(cudaMemPrefetchAsync(d_z, sizef, device, 0));
-    HANDLE_ERROR(cudaMemPrefetchAsync(d_g2, sizebin, device, 0));
+    HANDLE_ERROR(cudaMemPrefetchAsync(d_x, sizef, cudaMemLocation{cudaMemLocationTypeDevice, device}, 0));
+    HANDLE_ERROR(cudaMemPrefetchAsync(d_y, sizef, cudaMemLocation{cudaMemLocationTypeDevice, device}, 0));
+    HANDLE_ERROR(cudaMemPrefetchAsync(d_z, sizef, cudaMemLocation{cudaMemLocationTypeDevice, device}, 0));
+    HANDLE_ERROR(cudaMemPrefetchAsync(d_g2, sizebin, cudaMemLocation{cudaMemLocationTypeDevice, device}, 0));
+
     
     pair_gpu<<<nblock, nthreads>>>
         (d_x, d_y, d_z, d_g2, numatm, nconf, xbox, ybox, zbox, nbin);
